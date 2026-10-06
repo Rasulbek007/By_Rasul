@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Орысша">
+<meta name="theme-color" content="#0f0f12">
+<meta name="mobile-web-app-capable" content="yes">
+
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjMmExYTVhIi8+PHRleHQgeD0iNTAiIHk9IjY1IiBmb250LXNpemU9IjUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjY2RlNGZmIj7inLfvuI88L3RleHQ+PC9zdmc+">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjMmExYTVhIi8+PHRleHQgeD0iNTAiIHk9IjY1IiBmb250LXNpemU9IjUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjY2RlNGZmIj7inLfvuI88L3RleHQ+PC9zdmc+">
+
+<title>Орысша сөздер</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
+  html, body { overscroll-behavior: none; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f12; color: #fff; min-height: 100vh; overflow-x: hidden; user-select: none; }
+  button { font-family: inherit; cursor: pointer; }
+  #app { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+  
+  .header { padding: max(env(safe-area-inset-top), 16px) 16px 16px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 0.5px solid rgba(255,255,255,0.1); background: #0f0f12; position: sticky; top: 0; z-index: 10; }
+  .header h1 { font-size: 15px; font-weight: 600; letter-spacing: 1.5px; flex: 1; text-align: center; }
+  .header .icon-btn { background: none; border: none; color: #aaa; font-size: 20px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
+  .header .icon-btn:active { background: #1a1a22; color: #fff; }
+  
+  .search-row { padding: 12px 16px; background: #0f0f12; }
+  .search-input { width: 100%; background: #1a1a22; border: 0.5px solid rgba(255,255,255,0.15); border-radius: 22px; padding: 11px 18px 11px 42px; color: #fff; font-size: 13.5px; outline: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 15px center; }
+  .search-input:focus { border-color: rgba(255,255,255,0.35); }
+  .search-input::placeholder { color: #555; }
+  
+  .filter-row { display: flex; gap: 8px; padding: 0 16px 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-tab { background: #1a1a22; border: 0.5px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 6px 14px; font-size: 12px; color: #888; white-space: nowrap; }
+  .filter-tab.active { background: #4a2d9a; color: #fff; border-color: #4a2d9a; }
+  
+  .list { padding: 0 16px 100px; }
+  .word-card { background: #1a1a22; border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; border: 0.5px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
+  .word-card:active { transform: scale(0.98); background: #252530; }
+  .word-icon { font-size: 28px; width: 44px; height: 44px; background: #0f0f12; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .word-info { flex: 1; min-width: 0; }
+  .word-ru { font-size: 15px; font-weight: 600; color: #cde4ff; }
+  .word-kz { font-size: 12px; color: #4ade80; margin-top: 2px; }
+  .word-pron { font-size: 11px; color: #888; font-style: italic; margin-top: 2px; }
+  .word-tag { font-size: 10px; padding: 2px 7px; border-radius: 8px; font-weight: 600; display: inline-block; margin-left: 4px; }
+  .tag-НСВ { background: #1e3a2a; color: #4ade80; }
+  .tag-СВ { background: #3a1e2a; color: #f472b6; }
+  .tag-ж { background: #1a3a4a; color: #60a5fa; }
+  .tag-к { background: #3a2a1a; color: #fbbf24; }
+  
+  .add-btn { position: fixed; bottom: max(env(safe-area-inset-bottom), 24px); right: 24px; width: 56px; height: 56px; border-radius: 50%; background: #4a2d9a; border: none; color: #fff; font-size: 28px; box-shadow: 0 4px 20px rgba(74,45,154,0.5); z-index: 50; display: flex; align-items: center; justify-content: center; }
+  .add-btn:active { transform: scale(0.95); }
+  .practice-btn { position: fixed; bottom: max(env(safe-area-inset-bottom), 24px); right: 90px; width: 56px; height: 56px; border-radius: 50%; background: #f59e0b; border: none; color: #fff; font-size: 24px; box-shadow: 0 4px 20px rgba(245,158,11,0.5); z-index: 50; display: flex; align-items: center; justify-content: center; }
+  
+  #detail-view, #practice-view { display: none; flex-direction: column; min-height: 100vh; }
+  .detail-header { padding: max(env(safe-area-inset-top), 16px) 16px 16px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 0.5px solid rgba(255,255,255,0.1); position: sticky; top: 0; background: #0f0f12; z-index: 10; }
+  .detail-header .back { background: none; border: none; color: #aaa; font-size: 22px; padding: 0; width: 32px; height: 32px; }
+  .detail-header .title { font-size: 16px; font-weight: 600; flex: 1; }
+  
+  .hero { padding: 24px 20px; text-align: center; background: linear-gradient(135deg, #2a1a5a 0%, #1a2e5a 100%); }
+  .hero-word { font-size: 32px; font-weight: 700; color: #cde4ff; margin-bottom: 6px; }
+  .hero-pron { font-size: 14px; color: #888; font-style: italic; margin-bottom: 8px; }
+  .hero-kz { font-size: 16px; color: #4ade80; }
+  .hero-tags { display: flex; gap: 6px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+  .hero-actions { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
+  .hero-btn { background: rgba(255,255,255,0.1); border: 0.5px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 8px 18px; color: #fff; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+  .hero-btn:active { background: rgba(255,255,255,0.25); }
+  
+  .tense-section { padding: 16px; }
+  .tense-title { font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .tense-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-present { background: #4ade80; }
+  .dot-past { background: #fbbf24; }
+  .dot-future { background: #60a5fa; }
+  .dot-imperative { background: #f472b6; }
+  
+  .conjugation-card { background: #1a1a22; border-radius: 12px; overflow: hidden; }
+  .conj-row { padding: 11px 14px; display: flex; align-items: center; gap: 10px; border-bottom: 0.5px solid rgba(255,255,255,0.05); }
+  .conj-row:last-child { border-bottom: none; }
+  .conj-pronoun { width: 50px; font-size: 13px; color: #888; font-weight: 600; }
+  .conj-form { flex: 1; font-size: 14px; color: #cde4ff; font-weight: 500; }
+  .conj-translation { font-size: 11.5px; color: #4ade80; margin-top: 1px; }
+  .conj-sound { background: none; border: none; color: #888; font-size: 16px; padding: 4px 8px; border-radius: 8px; }
+  .conj-sound:active { background: rgba(255,255,255,0.1); color: #4ade80; }
+  
+  .info-box { background: #1a2e1e; border: 0.5px solid #2a5a35; border-radius: 10px; padding: 10px 12px; margin: 0 16px 12px; font-size: 11.5px; color: #a8d8b0; line-height: 1.5; }
+  .info-box b { color: #4ade80; }
+  
+  .examples-card { background: #1a1a22; border-radius: 12px; margin: 0 16px 12px; padding: 10px 14px; }
+  .examples-card .ex-title { font-size: 11px; color: #888; text-transform: uppercase; margin-bottom: 6px; }
+  .examples-card .ex-row { padding: 5px 0; font-size: 13px; border-bottom: 0.5px solid rgba(255,255,255,0.04); display: flex; align-items: center; gap: 8px; }
+  .examples-card .ex-row:last-child { border-bottom: none; }
+  .examples-card .ex-ru { color: #cde4ff; font-weight: 500; flex: 1; }
+  .examples-card .ex-kz { color: #4ade80; font-size: 11.5px; }
+  
+  .modal-back { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; }
+  .modal-back.show { display: flex; }
+  .modal { background: #1a1a22; border-radius: 18px; max-width: 440px; width: 100%; max-height: 85vh; overflow-y: auto; border: 0.5px solid rgba(255,255,255,0.1); }
+  .modal-header { padding: 16px 20px; border-bottom: 0.5px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-size: 15px; font-weight: 600; }
+  .modal-close { background: none; border: none; color: #aaa; font-size: 22px; padding: 0; width: 28px; height: 28px; }
+  .modal-body { padding: 18px 20px; }
+  .modal-footer { padding: 12px 20px; border-top: 0.5px solid rgba(255,255,255,0.1); display: flex; gap: 8px; justify-content: flex-end; }
+  .btn { padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 600; border: none; }
+  .btn-primary { background: #4a2d9a; color: #fff; }
+  .btn-secondary { background: #252530; color: #ddd; }
+  .form-row { margin-bottom: 14px; }
+  .form-label { font-size: 12px; color: #aaa; margin-bottom: 6px; display: block; }
+  .form-input, .form-select { width: 100%; background: #0f0f12; border: 0.5px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 10px 12px; color: #fff; font-size: 13px; outline: none; font-family: inherit; }
+  .form-input:focus, .form-select:focus { border-color: rgba(255,255,255,0.35); }
+  
+  .empty-state { padding: 40px 20px; text-align: center; color: #666; }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+  
+  .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #2a2a35; color: #fff; padding: 10px 20px; border-radius: 22px; font-size: 13px; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.5); max-width: 90%; text-align: center; }
+  
+  .install-prompt { position: fixed; bottom: max(env(safe-area-inset-bottom), 90px); left: 16px; right: 16px; background: linear-gradient(135deg, #2a1a5a, #1a2e5a); border-radius: 14px; padding: 14px 16px; display: none; align-items: center; gap: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 90; border: 0.5px solid rgba(255,255,255,0.15); }
+  .install-prompt.show { display: flex; }
+  .install-prompt .ip-text { flex: 1; font-size: 12.5px; line-height: 1.4; }
+  .install-prompt .ip-title { font-weight: 600; margin-bottom: 2px; }
+  .install-prompt .ip-btn { background: #4ade80; color: #0f0f12; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .install-prompt .ip-close { background: none; border: none; color: #888; font-size: 18px; padding: 0 4px; }
+  
+  .quiz-card { background: #1a1a22; border-radius: 14px; padding: 20px; margin: 16px; }
+  .quiz-q { font-size: 15px; color: #fff; line-height: 1.5; margin-bottom: 16px; }
+  .quiz-q .blank { display: inline-block; min-width: 80px; border-bottom: 2px dashed #4ade80; text-align: center; padding: 0 8px; color: #4ade80; font-weight: 600; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { background: #0f0f12; border: 0.5px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 12px 14px; font-size: 14px; text-align: left; color: #fff; }
+  .quiz-opt:active { background: #252530; }
+  .quiz-opt.correct { background: #1e3a2a; border-color: #4ade80; color: #4ade80; }
+  .quiz-opt.wrong { background: #3a1e1e; border-color: #dc2626; color: #f87171; }
+  .quiz-opt:disabled { cursor: not-allowed; }
+  .quiz-progress { text-align: center; color: #888; font-size: 12px; margin: 8px 0; }
+  .quiz-explain { background: #1a2e1e; border: 0.5px solid #2a5a35; border-radius: 10px; padding: 10px 12px; margin-top: 10px; font-size: 12px; color: #a8d8b0; line-height: 1.5; }
+  
+  .compare-card { background: #1a1a22; border-radius: 14px; padding: 16px; margin: 12px 16px; }
+  .compare-title { font-size: 16px; font-weight: 600; color: #cde4ff; margin-bottom: 12px; }
+  .compare-row { background: #0f0f12; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+  .compare-row .verb { color: #fbbf24; font-weight: 600; font-size: 14px; }
+  .compare-row .meaning { color: #4ade80; font-size: 12px; margin-top: 3px; }
+  .compare-row .example { color: #cde4ff; font-size: 12.5px; margin-top: 5px; font-style: italic; }
+  
+  .freq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 16px; }
+  .freq-item { background: #1a1a22; border-radius: 10px; padding: 12px; }
+  .freq-ru { color: #cde4ff; font-size: 14px; font-weight: 600; }
+  .freq-kz { color: #4ade80; font-size: 12px; margin-top: 2px; }
+  .freq-pron { color: #888; font-size: 11px; font-style: italic; margin-top: 2px; }
+  
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes pop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  .fade-in { animation: fadeIn 0.3s; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="home-view">
+    <div class="header">
+      <div style="width:32px"></div>
+      <h1>🇷🇺 СӨЗДЕР</h1>
+      <button class="icon-btn" id="info-btn">ℹ️</button>
+    </div>
+    
+    <div class="search-row">
+      <input type="text" class="search-input" id="search" placeholder="Сөз іздеу..."/>
+    </div>
+    
+    <div class="filter-row">
+      <div class="filter-tab active" data-cat="all">Барлығы</div>
+      <div class="filter-tab" data-cat="Негізгі">📚 Негізгі</div>
+      <div class="filter-tab" data-cat="Қозғалыс">🚶 Қозғалыс</div>
+      <div class="filter-tab" data-cat="Салыстыру">⚖️</div>
+      <div class="filter-tab" data-cat="Жиілік">⏰</div>
+      <div class="filter-tab" data-cat="Менің">⭐</div>
+    </div>
+    
+    <div class="list" id="word-list"></div>
+    
+    <button class="add-btn" id="add-btn">+</button>
+    <button class="practice-btn" id="practice-btn">📝</button>
+  </div>
+  
+  <div id="detail-view">
+    <div class="detail-header">
+      <button class="back" id="detail-back">‹</button>
+      <div class="title" id="detail-title">Сөз</div>
+      <div style="width:32px"></div>
+    </div>
+    <div id="detail-content"></div>
+  </div>
+  
+  <div id="practice-view">
+    <div class="detail-header">
+      <button class="back" id="practice-back">‹</button>
+      <div class="title">📝 Жаттығулар</div>
+      <div style="width:32px"></div>
+    </div>
+    <div id="practice-content"></div>
+  </div>
+</div>
+
+<div class="install-prompt" id="install-prompt">
+  <div class="ip-text">
+    <div class="ip-title">📱 Приложениеге қосу</div>
+    <div>Safari → 📤 → "Үй экранына қосу"</div>
+  </div>
+  <button class="ip-btn" id="install-btn">ОК</button>
+  <button class="ip-close" id="install-close">✕</button>
+</div>
+
+<div class="modal-back" id="add-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">➕ Жаңа сөз</div>
+      <button class="modal-close" data-close>✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label class="form-label">Орысша</label>
+        <input type="text" class="form-input" id="new-ru" placeholder="мысалы: гулять"/>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Қазақша</label>
+        <input type="text" class="form-input" id="new-kz" placeholder="мысалы: серуендеу"/>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Айтылуы</label>
+        <input type="text" class="form-input" id="new-pron" placeholder="gulyat'"/>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Категория</label>
+        <select class="form-select" id="new-cat">
+          <option>Негізгі</option>
+          <option>Қозғалыс</option>
+          <option>Әрекет</option>
+          <option>Сөйлеу</option>
+          <option>Тамақ</option>
+          <option>Оқу</option>
+          <option>Жұмыс</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close">Болдырмау</button>
+      <button class="btn btn-primary" id="save-word">💾 Сақтау</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-back" id="info-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">ℹ️ Анықтама</div>
+      <button class="modal-close" data-close>✕</button>
+    </div>
+    <div class="modal-body" style="font-size:13px; line-height:1.6">
+      <p style="margin-bottom:8px"><b>🚶 Қозғалыс:</b> 21 етістік</p>
+      <p style="margin-bottom:8px"><b>⏰ НСВ/СВ:</b> НСВ = үнемі, СВ = бір рет</p>
+      <p style="margin-bottom:8px"><b>📝 Жаттығу:</b> 10 тест</p>
+      <p style="margin-bottom:8px"><b>⚖️ Салыстыру:</b> 5 кесте</p>
+      <p style="margin-bottom:8px"><b>⏰ Жиілік:</b> 16 сөз</p>
+      <p><b>➕ + батырма:</b> Өз сөзіңіз</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" data-close">Жабу</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORE_KEY = "russian_words_pwa";
+let customWords = JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
+
+// =============== НЕГІЗГІ СӨЗДЕР (18) ===============
+const baseWords = [
+  {ru:"спать", kz:"ұйықтау", pron:"spat'", cat:"Негізгі", icon:"😴", type:"НСВ",
+   present:["я сплю","ты спишь","он спит","мы спим","вы спите","они спят"],
+   past:["я спал/спала","ты спал/спала","он спал","мы спали","вы спали","они спали"],
+   future:["я буду спать","ты будешь спать","он будет спать","мы будем спать","вы будете спать","они будут спать"],
+   imperative:["спи","спите"],
+   translations:["Мен ұйықтап жатырмын","Сен ұйықтап жатырсың","Ол ұйықтап жатыр","Біз ұйықтап жатырмыз","Сіздер ұйықтап жатырсыздар","Олар ұйықтап жатыр"],
+   past_translations:["Мен ұйықтадым","Сен ұйықтадың","Ол ұйықтады","Біз ұйықтадық","Сіздер ұйықтадыңыздар","Олар ұйықтады"],
+   examples:[{ru:"Я сплю 8 часов.", kz:"Мен 8 сағат ұйықтаймын.", pron:"ya splyu 8 chasov"}]},
+  {ru:"есть", kz:"жеу", pron:"yest'", cat:"Негізгі", icon:"🍽️", type:"НСВ",
+   present:["я ем","ты ешь","он ест","мы едим","вы едите","они едят"],
+   past:["я ел/ела","ты ел/ела","он ел","мы ели","вы ели","они ели"],
+   future:["я буду есть","ты будешь есть","он будет есть","мы будем есть","вы будете есть","они будут есть"],
+   imperative:["ешь","ешьте"],
+   translations:["Мен жеймін","Сен жейсің","Ол жейді","Біз жейміз","Сіздер жейсіздер","Олар жейді"],
+   past_translations:["Мен жедім","Сен жедің","Ол жеді","Біз жедік","Сіздер жедіңіздер","Олар жеді"],
+   examples:[{ru:"Я ем суп.", kz:"Мен сорпа жеймін.", pron:"ya yem sup"}]},
+  {ru:"читать", kz:"оқу", pron:"chitat'", cat:"Негізгі", icon:"📖", type:"НСВ",
+   present:["я читаю","ты читаешь","он читает","мы читаем","вы читаете","они читают"],
+   past:["я читал/а","ты читал/а","он читал","мы читали","вы читали","они читали"],
+   future:["я буду читать","ты будешь читать","он будет читать","мы будем читать","вы будете читать","они будут читать"],
+   imperative:["читай","читайте"],
+   translations:["Мен оқып жатырмын","Сен оқып жатырсың","Ол оқып жатыр","Біз оқып жатырмыз","Сіздер оқып жатырсыздар","Олар оқып жатыр"],
+   past_translations:["Мен оқыдым","Сен оқыдың","Ол оқыды","Біз оқыдық","Сіздер оқыдыңыздар","Олар оқыды"],
+   examples:[{ru:"Я читаю книгу.", kz:"Мен кітап оқып жатырмын.", pron:"ya chitayu knigu"}]},
+  {ru:"писать", kz:"жазу", pron:"pisat'", cat:"Негізгі", icon:"✍️", type:"НСВ",
+   present:["я пишу","ты пишешь","он пишет","мы пишем","вы пишете","они пишут"],
+   past:["я писал/а","ты писал/а","он писал","мы писали","вы писали","они писали"],
+   future:["я буду писать","ты будешь писать","он будет писать","мы будем писать","вы будете писать","они будут писать"],
+   imperative:["пиши","пишите"],
+   translations:["Мен жазып жатырмын","Сен жазып жатырсың","Ол жазып жатыр","Біз жазып жатырмыз","Сіздер жазып жатырсыздар","Олар жазып жатыр"],
+   past_translations:["Мен жаздым","Сен жаздың","Ол жазды","Біз жаздық","Сіздер жаздыңыздар","Олар жазды"],
+   examples:[{ru:"Он пишет письмо.", kz:"Ол хат жазып жатыр.", pron:"on pishet pis'mo"}]},
+  {ru:"говорить", kz:"сөйлеу", pron:"govorit'", cat:"Негізгі", icon:"💬", type:"НСВ",
+   present:["я говорю","ты говоришь","он говорит","мы говорим","вы говорите","они говорят"],
+   past:["я говорил/а","ты говорил/а","он говорил","мы говорили","вы говорили","они говорили"],
+   future:["я буду говорить","ты будешь говорить","он будет говорить","мы будем говорить","вы будете говорить","они будут говорить"],
+   imperative:["говори","говорите"],
+   translations:["Мен сөйлеп жатырмын","Сен сөйлеп жатырсың","Ол сөйлеп жатыр","Біз сөйлеп жатырмыз","Сіздер сөйлеп жатырсыздар","Олар сөйлеп жатыр"],
+   past_translations:["Мен сөйледім","Сен сөйледің","Ол сөйледі","Біз сөйледік","Сіздер сөйледіңіздер","Олар сөйледі"],
+   examples:[{ru:"Она говорит по-русски.", kz:"Ол орысша сөйлейді.", pron:"ona govorit po-russki"}]},
+  {ru:"работать", kz:"жұмыс істеу", pron:"rabotat'", cat:"Негізгі", icon:"💼", type:"НСВ",
+   present:["я работаю","ты работаешь","он работает","мы работаем","вы работаете","они работают"],
+   past:["я работал/а","ты работал/а","он работал","мы работали","вы работали","они работали"],
+   future:["я буду работать","ты будешь работать","он будет работать","мы будем работать","вы будете работать","они будут работать"],
+   imperative:["работай","работайте"],
+   translations:["Мен жұмыс істеп жатырмын","Сен жұмыс істеп жатырсың","Ол жұмыс істеп жатыр","Біз жұмыс істеп жатырмыз","Сіздер жұмыс істеп жатырсыздар","Олар жұмыс істеп жатыр"],
+   past_translations:["Мен жұмыс істедім","Сен жұмыс істедің","Ол жұмыс істеді","Біз жұмыс істедік","Сіздер жұмыс істедіңіздер","Олар жұмыс істеді"],
+   examples:[{ru:"Я работаю в офисе.", kz:"Мен кеңседе жұмыс істеймін.", pron:"ya rabotayu v ofise"}]},
+  {ru:"учиться", kz:"оқу (сабақ)", pron:"uchit'sya", cat:"Негізгі", icon:"🎓", type:"НСВ",
+   present:["я учусь","ты учишься","он учится","мы учимся","вы учитесь","они учатся"],
+   past:["я учился/ась","ты учился/ась","он учился","мы учились","вы учились","они учились"],
+   future:["я буду учиться","ты будешь учиться","он будет учиться","мы будем учиться","вы будете учиться","они будут учиться"],
+   imperative:["учись","учитесь"],
+   translations:["Мен оқып жатырмын","Сен оқып жатырсың","Ол оқып жатыр","Біз оқып жатырмыз","Сіздер оқып жатырсыздар","Олар оқып жатыр"],
+   past_translations:["Мен оқыдым","Сен оқыдың","Ол оқыды","Біз оқыдық","Сіздер оқыдыңыздар","Олар оқыды"],
+   examples:[{ru:"Я учусь в школе.", kz:"Мен мектепте оқимын.", pron:"ya uchus' v shkole"}]},
+  {ru:"жить", kz:"өмір сүру", pron:"zhit'", cat:"Негізгі", icon:"🏠", type:"НСВ",
+   present:["я живу","ты живёшь","он живёт","мы живём","вы живёте","они живут"],
+   past:["я жил/а","ты жил/а","он жил","мы жили","вы жили","они жили"],
+   future:["я буду жить","ты будешь жить","он будет жить","мы будем жить","вы будете жить","они будут жить"],
+   imperative:["живи","живите"],
+   translations:["Мен тұрамын","Сен тұрасың","Ол тұрады","Біз тұрамыз","Сіздер тұрасыздар","Олар тұрады"],
+   past_translations:["Мен тұрдым","Сен тұрдың","Ол тұрды","Біз тұрдық","Сіздер тұрдыңыздар","Олар тұрды"],
+   examples:[{ru:"Я живу в Алматы.", kz:"Мен Алматыда тұрамын.", pron:"ya zhivu v Almaty"}]},
+  {ru:"видеть", kz:"көру", pron:"videt'", cat:"Негізгі", icon:"👁️", type:"НСВ",
+   present:["я вижу","ты видишь","он видит","мы видим","вы видите","они видят"],
+   past:["я видел/а","ты видел/а","он видел","мы видели","вы видели","они видели"],
+   future:["я буду видеть","ты будешь видеть","он будет видеть","мы будем видеть","вы будете видеть","они будут видеть"],
+   imperative:["смотри","смотрите"],
+   translations:["Мен көріп жатырмын","Сен көріп жатырсың","Ол көріп жатыр","Біз көріп жатырмыз","Сіздер көріп жатырсыздар","Олар көріп жатыр"],
+   past_translations:["Мен көрдім","Сен көрдің","Ол көрді","Біз көрдік","Сіздер көрдіңіздер","Олар көрді"],
+   examples:[{ru:"Я вижу кота.", kz:"Мен мысықты көріп жатырмын.", pron:"ya vizhu kota"}]},
+  {ru:"слышать", kz:"есту", pron:"slyshat'", cat:"Негізгі", icon:"👂", type:"НСВ",
+   present:["я слышу","ты слышишь","он слышит","мы слышим","вы слышите","они слышат"],
+   past:["я слышал/а","ты слышал/а","он слышал","мы слышали","вы слышали","они слышали"],
+   future:["я буду слышать","ты будешь слышать","он будет слышать","мы будем слышать","вы будете слышать","они будут слышать"],
+   imperative:["слышь","слышьте"],
+   translations:["Мен естіп жатырмын","Сен естіп жатырсың","Ол естіп жатыр","Біз естіп жатырмыз","Сіздер естіп жатырсыздар","Олар естіп жатыр"],
+   past_translations:["Мен естідім","Сен естідің","Ол естіді","Біз естідік","Сіздер естідіңіздер","Олар естіді"],
+   examples:[{ru:"Я слышу музыку.", kz:"Мен музыканы естіп жатырмын.", pron:"ya slyshu muzyku"}]},
+  {ru:"знать", kz:"білу", pron:"znat'", cat:"Негізгі", icon:"💡", type:"НСВ",
+   present:["я знаю","ты знаешь","он знает","мы знаем","вы знаете","они знают"],
+   past:["я знал/а","ты знал/а","он знал","мы знали","вы знали","они знали"],
+   future:["я буду знать","ты будешь знать","он будет знать","мы будем знать","вы будете знать","они будут знать"],
+   imperative:["знай","знайте"],
+   translations:["Мен білемін","Сен білесің","Ол біледі","Біз білеміз","Сіздер білесіздер","Олар біледі"],
+   past_translations:["Мен білдім","Сен білдің","Ол білді","Біз білдік","Сіздер білдіңіздер","Олар білді"],
+   examples:[{ru:"Я знаю ответ.", kz:"Мен жауапты білемін.", pron:"ya znayu otvet"}]},
+  {ru:"хотеть", kz:"қалау", pron:"khotet'", cat:"Негізгі", icon:"❤️", type:"НСВ",
+   present:["я хочу","ты хочешь","он хочет","мы хотим","вы хотите","они хотят"],
+   past:["я хотел/а","ты хотел/а","он хотел","мы хотели","вы хотели","они хотели"],
+   future:["я буду хотеть","ты будешь хотеть","он будет хотеть","мы будем хотеть","вы будете хотеть","они будут хотеть"],
+   imperative:["хоти","хотите"],
+   translations:["Мен қалаймын","Сен қалайсың","Ол қалайды","Біз қалаймыз","Сіздер қалайсыздар","Олар қалайды"],
+   past_translations:["Мен қаладым","Сен қаладың","Ол қалады","Біз қаладық","Сіздер қаладыңыздар","Олар қалады"],
+   examples:[{ru:"Я хочу пить.", kz:"Мен ішкім келеді.", pron:"ya khochu pit'"}]},
+  {ru:"мочь", kz:"ала білу", pron:"moch'", cat:"Негізгі", icon:"💪", type:"НСВ",
+   present:["я могу","ты можешь","он может","мы можем","вы можете","они могут"],
+   past:["я мог/ла","ты мог/ла","он мог","мы могли","вы могли","они могли"],
+   future:["я смогу","ты сможешь","он сможет","мы сможем","вы сможете","они смогут"],
+   imperative:["—","—"],
+   translations:["Мен аламын","Сен аласың","Ол алады","Біз аламыз","Сіздер аласыздар","Олар алады"],
+   past_translations:["Мен алдым","Сен алдың","Ол алды","Біз алдық","Сіздер алдыңыздар","Олар алды"],
+   examples:[{ru:"Я могу помочь.", kz:"Мен көмектесе аламын.", pron:"ya mogu pomoch'"}]},
+  {ru:"пить", kz:"ішу", pron:"pit'", cat:"Негізгі", icon:"🥤", type:"НСВ",
+   present:["я пью","ты пьёшь","он пьёт","мы пьём","вы пьёте","они пьют"],
+   past:["я пил/а","ты пил/а","он пил","мы пили","вы пили","они пили"],
+   future:["я буду пить","ты будешь пить","он будет пить","мы будем пить","вы будете пить","они будут пить"],
+   imperative:["пей","пейте"],
+   translations:["Мен ішіп жатырмын","Сен ішіп жатырсың","Ол ішіп жатыр","Біз ішіп жатырмыз","Сіздер ішіп жатырсыздар","Олар ішіп жатыр"],
+   past_translations:["Мен іштім","Сен іштің","Ол ішті","Біз іштік","Сіздер іштіңіздер","Олар ішті"],
+   examples:[{ru:"Я пью чай.", kz:"Мен шай ішіп жатырмын.", pron:"ya p'yu chay"}]},
+  {ru:"смотреть", kz:"қарау", pron:"smotret'", cat:"Негізгі", icon:"👀", type:"НСВ",
+   present:["я смотрю","ты смотришь","он смотрит","мы смотрим","вы смотрите","они смотрят"],
+   past:["я смотрел/а","ты смотрел/а","он смотрел","мы смотрели","вы смотрели","они смотрели"],
+   future:["я буду смотреть","ты будешь смотреть","он будет смотреть","мы будем смотреть","вы будете смотреть","они будут смотреть"],
+   imperative:["смотри","смотрите"],
+   translations:["Мен қарап жатырмын","Сен қарап жатырсың","Ол қарап жатыр","Біз қарап жатырмыз","Сіздер қарап жатырсыздар","Олар қарап жатыр"],
+   past_translations:["Мен қарадым","Сен қарадың","Ол қарады","Біз қарадық","Сіздер қарадыңыздар","Олар қарады"],
+   examples:[{ru:"Я смотрю фильм.", kz:"Мен фильм қарап жатырмын.", pron:"ya smotryu fil'm"}]},
+  {ru:"любить", kz:"жақсы көру", pron:"lyubit'", cat:"Негізгі", icon:"💖", type:"НСВ",
+   present:["я люблю","ты любишь","он любит","мы любим","вы любите","они любят"],
+   past:["я любил/а","ты любил/а","он любил","мы любили","вы любили","они любили"],
+   future:["я буду любить","ты будешь любить","он будет любить","мы будем любить","вы будете любить","они будут любить"],
+   imperative:["люби","любите"],
+   translations:["Мен жақсы көремін","Сен жақсы көресің","Ол жақсы көреді","Біз жақсы көреміз","Сіздер жақсы көресіздер","Олар жақсы көреді"],
+   past_translations:["Мен жақсы көрдім","Сен жақсы көрдің","Ол жақсы көрді","Біз жақсы көрдік","Сіздер жақсы көрдіңіздер","Олар жақсы көрді"],
+   examples:[{ru:"Я люблю читать.", kz:"Мен оқығанды жақсы көремін.", pron:"ya lyublyu chitat'"}]},
+  {ru:"думать", kz:"ойлау", pron:"dumat'", cat:"Негізгі", icon:"🧠", type:"НСВ",
+   present:["я думаю","ты думаешь","он думает","мы думаем","вы думаете","они думают"],
+   past:["я думал/а","ты думал/а","он думал","мы думали","вы думали","они думали"],
+   future:["я буду думать","ты будешь думать","он будет думать","мы будем думать","вы будете думать","они будут думать"],
+   imperative:["думай","думайте"],
+   translations:["Мен ойлап жатырмын","Сен ойлап жатырсың","Ол ойлап жатыр","Біз ойлап жатырмыз","Сіздер ойлап жатырсыздар","Олар ойлап жатыр"],
+   past_translations:["Мен ойладым","Сен ойладың","Ол ойлады","Біз ойладық","Сіздер ойладыңыздар","Олар ойлады"],
+   examples:[{ru:"Я думаю о тебе.", kz:"Мен сен туралы ойлап жатырмын.", pron:"ya dumayu o tebe"}]},
+  {ru:"играть", kz:"ойнау", pron:"igrat'", cat:"Негізгі", icon:"🎮", type:"НСВ",
+   present:["я играю","ты играешь","он играет","мы играем","вы играете","они играют"],
+   past:["я играл/а","ты играл/а","он играл","мы играли","вы играли","они играли"],
+   future:["я буду играть","ты будешь играть","он будет играть","мы будем играть","вы будете играть","они будут играть"],
+   imperative:["играй","играйте"],
+   translations:["Мен ойнап жатырмын","Сен ойнап жатырсың","Ол ойнап жатыр","Біз ойнап жатырмыз","Сіздер ойнап жатырсыздар","Олар ойнап жатыр"],
+   past_translations:["Мен ойнадым","Сен ойнадың","Ол ойнады","Біз ойнадық","Сіздер ойнадыңыздар","Олар ойнады"],
+   examples:[{ru:"Я играю в футбол.", kz:"Мен футбол ойнап жатырмын.", pron:"ya igrayu v futbol"}]}
+];
+
+// =============== ҚОЗҒАЛЫС ЕТІСТІКТЕРІ (21) ===============
+const motionWords = [
+  {ru:"идти", kz:"жаяу бару (бір рет)", pron:"idti", cat:"Қозғалыс", icon:"🚶", type:"НСВ", transport:"ж",
+   present:["я иду","ты идёшь","он идёт","мы идём","вы идёте","они идут"],
+   past:["я шёл/шла","ты шёл/шла","он шёл","мы шли","вы шли","они шли"],
+   future:["я пойду","ты пойдёшь","он пойдёт","мы пойдём","вы пойдёте","они пойдут"],
+   imperative:["иди","идите"],
+   translations:["Мен жаяу барып жатырмын","Сен жаяу барып жатырсың","Ол жаяу барып жатыр","Біз жаяу барып жатырмыз","Сіздер жаяу барып жатырсыздар","Олар жаяу барып жатыр"],
+   past_translations:["Мен жаяу бардым","Сен жаяу бардың","Ол жаяу барды","Біз жаяу бардық","Сіздер жаяу бардыңыздар","Олар жаяу барды"],
+   examples:[{ru:"Я иду в магазин.", kz:"Мен дүкенге барып жатырмын.", pron:"ya idu v magazin"}]},
+  {ru:"ходить", kz:"жаяу жүру (үнемі)", pron:"khodit'", cat:"Қозғалыс", icon:"🚶‍♂️", type:"НСВ", transport:"ж",
+   present:["я хожу","ты ходишь","он ходит","мы ходим","вы ходите","они ходят"],
+   past:["я ходил/а","ты ходил/а","он ходил","мы ходили","вы ходили","они ходили"],
+   future:["я буду ходить","ты будешь ходить","он будет ходить","мы будем ходить","вы будете ходить","они будут ходить"],
+   imperative:["ходи","ходите"],
+   translations:["Мен жаяу барып тұрамын","Сен жаяу барып тұрасың","Ол жаяу барып тұрады","Біз жаяу барып тұрамыз","Сіздер жаяу барып тұрасыздар","Олар жаяу барып тұрады"],
+   past_translations:["Мен жаяу бардым (үнемі)","Сен жаяу бардың","Ол жаяу барды","Біз жаяу бардық","Сіздер жаяу бардыңыздар","Олар жаяу барды"],
+   examples:[{ru:"Я хожу в школу каждый день.", kz:"Мен күн сайын мектепке барамын.", pron:"ya khozhu v shkolu kazhdyy den'"}]},
+  {ru:"ехать", kz:"көлікпен бару (бір рет)", pron:"yekhat'", cat:"Қозғалыс", icon:"🚗", type:"НСВ", transport:"к",
+   present:["я еду","ты едешь","он едет","мы едем","вы едете","они едут"],
+   past:["я ехал/а","ты ехал/а","он ехал","мы ехали","вы ехали","они ехали"],
+   future:["я поеду","ты поедешь","он поедет","мы поедем","вы поедете","они поедут"],
+   imperative:["езжай","езжайте"],
+   translations:["Мен көлікпен барып жатырмын","Сен көлікпен барып жатырсың","Ол көлікпен барып жатыр","Біз көлікпен барып жатырмыз","Сіздер көлікпен барып жатырсыздар","Олар көлікпен барып жатыр"],
+   past_translations:["Мен көлікпен бардым","Сен көлікпен бардың","Ол көлікпен барды","Біз көлікпен бардық","Сіздер көлікпен бардыңыздар","Олар көлікпен барды"],
+   examples:[{ru:"Я еду в Алматы на машине.", kz:"Мен Алматыға көлікпен барып жатырмын.", pron:"ya yedu v Almaty na mashine"}]},
+  {ru:"ездить", kz:"көлікпен жүру (үнемі)", pron:"yezdit'", cat:"Қозғалыс", icon:"🚙", type:"НСВ", transport:"к",
+   present:["я езжу","ты ездишь","он ездит","мы ездим","вы ездите","они ездят"],
+   past:["я ездил/а","ты ездил/а","он ездил","мы ездили","вы ездили","они ездили"],
+   future:["я буду ездить","ты будешь ездить","он будет ездить","мы будем ездить","вы будете ездить","они будут ездить"],
+   imperative:["езди","ездите"],
+   translations:["Мен көлікпен барып тұрамын","Сен көлікпен барып тұрасың","Ол көлікпен барып тұрады","Біз көлікпен барып тұрамыз","Сіздер көлікпен барып тұрасыздар","Олар көлікпен барып тұрады"],
+   past_translations:["Мен көлікпен бардым (үнемі)","Сен көлікпен бардың","Ол көлікпен барды","Біз көлікпен бардық","Сіздер көлікпен бардыңыздар","Олар көлікпен барды"],
+   examples:[{ru:"Я езжу в Алматы каждый месяц.", kz:"Мен ай сайын Алматыға барамын.", pron:"ya yezzhu v Almaty kazhdyy mesyats"}]},
+  {ru:"прийти", kz:"жаяу келу (бір рет)", pron:"prityi", cat:"Қозғалыс", icon:"🚶➡️", type:"СВ", transport:"ж",
+   present:["—","—","—","—","—","—"],
+   past:["я пришёл/пришла","ты пришёл/пришла","он пришёл","мы пришли","вы пришли","они пришли"],
+   future:["я приду","ты придёшь","он придёт","мы придём","вы придёте","они придут"],
+   imperative:["приди","придите"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен жаяу келдім","Сен жаяу келдің","Ол жаяу келді","Біз жаяу келдік","Сіздер жаяу келдіңіздер","Олар жаяу келді"],
+   examples:[{ru:"Я пришёл домой.", kz:"Мен үйге келдім.", pron:"ya prishol domoy"}]},
+  {ru:"приходить", kz:"жаяу келу (үнемі)", pron:"prikhodit'", cat:"Қозғалыс", icon:"🚶⬅️", type:"НСВ", transport:"ж",
+   present:["я прихожу","ты приходишь","он приходит","мы приходим","вы приходите","они приходят"],
+   past:["я приходил/а","ты приходил/а","он приходил","мы приходили","вы приходили","они приходили"],
+   future:["я буду приходить","ты будешь приходить","он будет приходить","мы будем приходить","вы будете приходить","они будут приходить"],
+   imperative:["приходи","приходите"],
+   translations:["Мен жаяу келіп тұрамын","Сен жаяу келіп тұрасың","Ол жаяу келіп тұрады","Біз жаяу келіп тұрамыз","Сіздер жаяу келіп тұрасыздар","Олар жаяу келіп тұрады"],
+   past_translations:["Мен жаяу келдім (үнемі)","Сен жаяу келдің","Ол жаяу келді","Біз жаяу келдік","Сіздер жаяу келдіңіздер","Олар жаяу келді"],
+   examples:[{ru:"Он приходит вовремя.", kz:"Ол уақытында келеді.", pron:"on prikhodit vovremya"}]},
+  {ru:"уйти", kz:"жаяу кету (бір рет)", pron:"uityi", cat:"Қозғалыс", icon:"🚶⏩", type:"СВ", transport:"ж",
+   present:["—","—","—","—","—","—"],
+   past:["я ушёл/ушла","ты ушёл/ушла","он ушёл","мы ушли","вы ушли","они ушли"],
+   future:["я уйду","ты уйдёшь","он уйдёт","мы уйдём","вы уйдёте","они уйдут"],
+   imperative:["уйди","уйдите"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен жаяу кеттім","Сен жаяу кеттің","Ол жаяу кетті","Біз жаяу кеттік","Сіздер жаяу кеттіңіздер","Олар жаяу кетті"],
+   examples:[{ru:"Он уже ушёл.", kz:"Ол кетіп қалды.", pron:"on uzhe ushol"}]},
+  {ru:"уходить", kz:"жаяу кету (үнемі)", pron:"ukhodit'", cat:"Қозғалыс", icon:"🚶➡️⏩", type:"НСВ", transport:"ж",
+   present:["я ухожу","ты уходишь","он уходит","мы уходим","вы уходите","они уходят"],
+   past:["я уходил/а","ты уходил/а","он уходил","мы уходили","вы уходили","они уходили"],
+   future:["я буду уходить","ты будешь уходить","он будет уходить","мы будем уходить","вы будете уходить","они будут уходить"],
+   imperative:["уходи","уходите"],
+   translations:["Мен жаяу кетіп жатырмын","Сен жаяу кетіп жатырсың","Ол жаяу кетіп жатыр","Біз жаяу кетіп жатырмыз","Сіздер жаяу кетіп жатырсыздар","Олар жаяу кетіп жатыр"],
+   past_translations:["Мен жаяу кеттім","Сен жаяу кеттің","Ол жаяу кетті","Біз жаяу кеттік","Сіздер жаяу кеттіңіздер","Олар жаяу кетті"],
+   examples:[{ru:"Я ухожу домой.", kz:"Мен үйге кетіп жатырмын.", pron:"ya ukhozhu domoy"}]},
+  {ru:"приехать", kz:"көлікпен келу (бір рет)", pron:"priyekhat'", cat:"Қозғалыс", icon:"🚗➡️", type:"СВ", transport:"к",
+   present:["—","—","—","—","—","—"],
+   past:["я приехал/а","ты приехал/а","он приехал","мы приехали","вы приехали","они приехали"],
+   future:["я приеду","ты приедешь","он приедет","мы приедем","вы приедете","они приедут"],
+   imperative:["приедь","приедьте"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен көлікпен келдім","Сен көлікпен келдің","Ол көлікпен келді","Біз көлікпен келдік","Сіздер көлікпен келдіңіздер","Олар көлікпен келді"],
+   examples:[{ru:"Мы приехали в Москву.", kz:"Біз Мәскеуге келдік.", pron:"my priyekhali v Moskvu"}]},
+  {ru:"приезжать", kz:"көлікпен келу (үнемі)", pron:"priyezzhat'", cat:"Қозғалыс", icon:"🚗⬅️", type:"НСВ", transport:"к",
+   present:["я приезжаю","ты приезжаешь","он приезжает","мы приезжаем","вы приезжаете","они приезжают"],
+   past:["я приезжал/а","ты приезжал/а","он приезжал","мы приезжали","вы приезжали","они приезжали"],
+   future:["я буду приезжать","ты будешь приезжать","он будет приезжать","мы будем приезжать","вы будете приезжать","они будут приезжать"],
+   imperative:["приезжай","приезжайте"],
+   translations:["Мен көлікпен келіп тұрамын","Сен көлікпен келіп тұрасың","Ол көлікпен келіп тұрады","Біз көлікпен келіп тұрамыз","Сіздер көлікпен келіп тұрасыздар","Олар көлікпен келіп тұрады"],
+   past_translations:["Мен көлікпен келдім (үнемі)","Сен көлікпен келдің","Ол көлікпен келді","Біз көлікпен келдік","Сіздер көлікпен келдіңіздер","Олар көлікпен келді"],
+   examples:[{ru:"Он приезжает каждую неделю.", kz:"Ол апта сайын келеді.", pron:"on priyezzhayet kazhduyu nedelyu"}]},
+  {ru:"уехать", kz:"көлікпен кету (бір рет)", pron:"uyekhat'", cat:"Қозғалыс", icon:"🚗⏩", type:"СВ", transport:"к",
+   present:["—","—","—","—","—","—"],
+   past:["я уехал/а","ты уехал/а","он уехал","мы уехали","вы уехали","они уехали"],
+   future:["я уеду","ты уедешь","он уедет","мы уедем","вы уедете","они уедут"],
+   imperative:["уедь","уедьте"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен көлікпен кеттім","Сен көлікпен кеттің","Ол көлікпен кетті","Біз көлікпен кеттік","Сіздер көлікпен кеттіңіздер","Олар көлікпен кетті"],
+   examples:[{ru:"Он уехал в Москву.", kz:"Ол Мәскеуге кетті.", pron:"on uyekhal v Moskvu"}]},
+  {ru:"уезжать", kz:"көлікпен кету (үнемі)", pron:"uyezzhat'", cat:"Қозғалыс", icon:"🚗➡️⏩", type:"НСВ", transport:"к",
+   present:["я уезжаю","ты уезжаешь","он уезжает","мы уезжаем","вы уезжаете","они уезжают"],
+   past:["я уезжал/а","ты уезжал/а","он уезжал","мы уезжали","вы уезжали","они уезжали"],
+   future:["я буду уезжать","ты будешь уезжать","он будет уезжать","мы будем уезжать","вы будете уезжать","они будут уезжать"],
+   imperative:["уезжай","уезжайте"],
+   translations:["Мен көлікпен кетіп жатырмын","Сен көлікпен кетіп жатырсың","Ол көлікпен кетіп жатыр","Біз көлікпен кетіп жатырмыз","Сіздер көлікпен кетіп жатырсыздар","Олар көлікпен кетіп жатыр"],
+   past_translations:["Мен көлікпен кеттім","Сен көлікпен кеттің","Ол көлікпен кетті","Біз көлікпен кеттік","Сіздер көлікпен кеттіңіздер","Олар көлікпен кетті"],
+   examples:[{ru:"Мы уезжаем завтра.", kz:"Біз ертең кетеміз.", pron:"my uyezzhayem zavtra"}]},
+  {ru:"зайти", kz:"жаяу соғып кету", pron:"zayti", cat:"Қозғалыс", icon:"🚪", type:"СВ", transport:"ж",
+   present:["—","—","—","—","—","—"],
+   past:["я зашёл/зашла","ты зашёл/зашла","он зашёл","мы зашли","вы зашли","они зашли"],
+   future:["я зайду","ты зайдёшь","он зайдёт","мы зайдём","вы зайдёте","они зайдут"],
+   imperative:["зайди","зайдите"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен жаяу соғып кеттім","Сен жаяу соғып кеттің","Ол жаяу соғып кетті","Біз жаяу соғып кеттік","Сіздер жаяу соғып кеттіңіздер","Олар жаяу соғып кетті"],
+   examples:[{ru:"Зайди в магазин.", kz:"Дүкенге соғып кет.", pron:"zaydi v magazin"}]},
+  {ru:"заехать", kz:"көлікпен соғып кету", pron:"zayekhat'", cat:"Қозғалыс", icon:"🚪🚗", type:"СВ", transport:"к",
+   present:["—","—","—","—","—","—"],
+   past:["я заехал/а","ты заехал/а","он заехал","мы заехали","вы заехали","они заехали"],
+   future:["я заеду","ты заедешь","он заедет","мы заедем","вы заедете","они заедут"],
+   imperative:["заедь","заедьте"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен көлікпен соғып кеттім","Сен көлікпен соғып кеттің","Ол көлікпен соғып кетті","Біз көлікпен соғып кеттік","Сіздер көлікпен соғып кеттіңіздер","Олар көлікпен соғып кетті"],
+   examples:[{ru:"Заедь по пути.", kz:"Жолда соғып кет.", pron:"zayedy po puti"}]},
+  {ru:"подойти", kz:"жаяу жақындау", pron:"podoyti", cat:"Қозғалыс", icon:"📍", type:"СВ", transport:"ж",
+   present:["—","—","—","—","—","—"],
+   past:["я подошёл/подошла","ты подошёл/подошла","он подошёл","мы подошли","вы подошли","они подошли"],
+   future:["я подойду","ты подойдёшь","он подойдёт","мы подойдём","вы подойдёте","они подойдут"],
+   imperative:["подойди","подойдите"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен жақындап келдім (жаяу)","Сен жақындап келдің","Ол жақындап келді","Біз жақындап келдік","Сіздер жақындап келдіңіздер","Олар жақындап келді"],
+   examples:[{ru:"Подойди сюда.", kz:"Осында кел.", pron:"podoydi syuda"}]},
+  {ru:"подъехать", kz:"көлікпен жақындау", pron:"podyekhat'", cat:"Қозғалыс", icon:"📍🚗", type:"СВ", transport:"к",
+   present:["—","—","—","—","—","—"],
+   past:["я подъехал/а","ты подъехал/а","он подъехал","мы подъехали","вы подъехали","они подъехали"],
+   future:["я подъеду","ты подъедешь","он подъедет","мы подъедем","вы подъедете","они подъедут"],
+   imperative:["подъедь","подъедьте"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен көлікпен жақындап келдім","Сен көлікпен жақындап келдің","Ол көлікпен жақындап келді","Біз көлікпен жақындап келдік","Сіздер көлікпен жақындап келдіңіздер","Олар көлікпен жақындап келді"],
+   examples:[{ru:"Подъедь поближе.", kz:"Жақынырақ кел.", pron:"podyedy poblizhe"}]},
+  {ru:"выйти", kz:"жаяу шығу", pron:"vyyti", cat:"Қозғалыс", icon:"🚪⬅️", type:"СВ", transport:"ж",
+   present:["—","—","—","—","—","—"],
+   past:["я вышел/вышла","ты вышел/вышла","он вышел","мы вышли","вы вышли","они вышли"],
+   future:["я выйду","ты выйдешь","он выйдет","мы выйдем","вы выйдете","они выйдут"],
+   imperative:["выйди","выйдите"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен жаяу шықтым","Сен жаяу шықтың","Ол жаяу шықты","Біз жаяу шықтық","Сіздер жаяу шықтыңыздар","Олар жаяу шықты"],
+   examples:[{ru:"Я вышел из дома.", kz:"Мен үйден шықтым.", pron:"ya vyshel iz doma"}]},
+  {ru:"выехать", kz:"көлікпен шығу", pron:"vyyekhat'", cat:"Қозғалыс", icon:"🚪🚗", type:"СВ", transport:"к",
+   present:["—","—","—","—","—","—"],
+   past:["я выехал/а","ты выехал/а","он выехал","мы выехали","вы выехали","они выехали"],
+   future:["я выеду","ты выедешь","он выедет","мы выедем","вы выедете","они выедут"],
+   imperative:["выедь","выедьте"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен көлікпен шықтым","Сен көлікпен шықтың","Ол көлікпен шықты","Біз көлікпен шықтық","Сіздер көлікпен шықтыңыздар","Олар көлікпен шықты"],
+   examples:[{ru:"Мы выехали из города.", kz:"Біз қаладан шықтық.", pron:"my vyyehali iz goroda"}]},
+  {ru:"перейти", kz:"жаяу өту", pron:"pereyti", cat:"Қозғалыс", icon:"🚦", type:"СВ", transport:"ж",
+   present:["—","—","—","—","—","—"],
+   past:["я перешёл/перешла","ты перешёл/перешла","он перешёл","мы перешли","вы перешли","они перешли"],
+   future:["я перейду","ты перейдёшь","он перейдёт","мы перейдём","вы перейдёте","они перейдут"],
+   imperative:["перейди","перейдите"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен жаяу өттім","Сен жаяу өттің","Ол жаяу өтті","Біз жаяу өттік","Сіздер жаяу өттіңіздер","Олар жаяу өтті"],
+   examples:[{ru:"Перейди дорогу.", kz:"Жолдан өт.", pron:"pereydi dorogu"}]},
+  {ru:"переехать", kz:"көшіп кету / өту", pron:"pereyekhat'", cat:"Қозғалыс", icon:"📦", type:"СВ", transport:"к",
+   present:["—","—","—","—","—","—"],
+   past:["я переехал/а","ты переехал/а","он переехал","мы переехали","вы переехали","они переехали"],
+   future:["я перееду","ты переедешь","он переедет","мы переедем","вы переедете","они переедут"],
+   imperative:["переедь","переедьте"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен көшіп кеттім","Сен көшіп кеттің","Ол көшіп кетті","Біз көшіп кеттік","Сіздер көшіп кеттіңіздер","Олар көшіп кетті"],
+   examples:[{ru:"Мы переехали в новый дом.", kz:"Біз жаңа үйге көштік.", pron:"my pereyekhali v novyy dom"}]},
+  {ru:"сходить", kz:"барып қайту (жаяу)", pron:"skhodit'", cat:"Қозғалыс", icon:"🔄", type:"СВ", transport:"ж",
+   present:["—","—","—","—","—","—"],
+   past:["я сходил/а","ты сходил/а","он сходил","мы сходили","вы сходили","они сходили"],
+   future:["я схожу","ты сходишь","он сходит","мы сходим","вы сходите","они сходят"],
+   imperative:["сходи","сходите"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен жаяу барып қайттым","Сен жаяу барып қайттың","Ол жаяу барып қайтты","Біз жаяу барып қайттық","Сіздер жаяу барып қайттыңыздар","Олар жаяу барып қайтты"],
+   examples:[{ru:"Сходи в магазин.", kz:"Дүкенге барып кел.", pron:"skhodi v magazin"}]},
+  {ru:"съездить", kz:"барып қайту (көлікпен)", pron:"syezdit'", cat:"Қозғалыс", icon:"🔄🚗", type:"СВ", transport:"к",
+   present:["—","—","—","—","—","—"],
+   past:["я съездил/а","ты съездил/а","он съездил","мы съездили","вы съездили","они съездили"],
+   future:["я съезжу","ты съездишь","он съездит","мы съездим","вы съездите","они съездят"],
+   imperative:["съезди","съездите"],
+   translations:["—","—","—","—","—","—"],
+   past_translations:["Мен көлікпен барып қайттым","Сен көлікпен барып қайттың","Ол көлікпен барып қайтты","Біз көлікпен барып қайттық","Сіздер көлікпен барып қайттыңыздар","Олар көлікпен барып қайтты"],
+   examples:[{ru:"Съезди в аптеку.", kz:"Аптекаға барып кел.", pron:"syezdi v apteku"}]}
+];
+
+// =============== ЖИІЛІК СӨЗДЕРІ ===============
+const frequencyWords = [
+  {ru:"каждый день", kz:"күн сайын", pron:"kazhdyy den'", cat:"Жиілік"},
+  {ru:"каждую неделю", kz:"апта сайын", pron:"kazhduyu nedelyu", cat:"Жиілік"},
+  {ru:"каждый месяц", kz:"ай сайын", pron:"kazhdyy mesyats", cat:"Жиілік"},
+  {ru:"каждый год", kz:"жыл сайын", pron:"kazhdyy god", cat:"Жиілік"},
+  {ru:"часто", kz:"жиі", pron:"chasto", cat:"Жиілік"},
+  {ru:"иногда", kz:"кейде", pron:"inogda", cat:"Жиілік"},
+  {ru:"редко", kz:"сирек", pron:"redko", cat:"Жиілік"},
+  {ru:"обычно", kz:"әдетте", pron:"obychno", cat:"Жиілік"},
+  {ru:"всегда", kz:"үнемі / әрқашан", pron:"vsegda", cat:"Жиілік"},
+  {ru:"никогда", kz:"ешқашан", pron:"nikogda", cat:"Жиілік"},
+  {ru:"сейчас", kz:"қазір", pron:"seychas", cat:"Жиілік"},
+  {ru:"вчера", kz:"кеше", pron:"vchera", cat:"Жиілік"},
+  {ru:"завтра", kz:"ертең", pron:"zavtra", cat:"Жиілік"},
+  {ru:"сегодня", kz:"бүгін", pron:"segodnya", cat:"Жиілік"},
+  {ru:"позавчера", kz:"алдыңғы күні", pron:"pozavchera", cat:"Жиілік"},
+  {ru:"послезавтра", kz:"арғы күні", pron:"poslezavtra", cat:"Жиілік"}
+];
+
+// =============== ЖАТТЫҒУЛАР ===============
+const quizzes = [
+  {q:"Каждое утро я ________ на работу пешком.", answer:"хожу", options:["иду","хожу","еду","езжу"], explain:"'каждое утро' = үнемі, сондықтан ХОЖУ (НСВ)"},
+  {q:"Сейчас он ________ в аэропорт на такси.", answer:"едет", options:["идёт","ходит","едет","ездит"], explain:"'сейчас' = қазір, көлікпен → ЕДЕТ"},
+  {q:"Мы ________ в Алматы каждый месяц.", answer:"ездим", options:["едем","ездим","идём","ходим"], explain:"'каждый месяц' = үнемі, көлік → ЕЗДИМ"},
+  {q:"Она уже ________. Позвони ей.", answer:"ушла", options:["уходит","ушла","уходила","уйдёт"], explain:"'уже' = бұрын кетіп қалды, СВ → УШЛА"},
+  {q:"________ в магазин и купи хлеб!", answer:"сходи", options:["иди","сходи","ходи","зайди"], explain:"барып қайту + бұйрық → СХОДИ"},
+  {q:"Он ________ к другу вчера вечером.", answer:"зашёл", options:["заходит","зашёл","зайдёт","заходил"], explain:"'вчера' = бір рет өткен, СВ → ЗАШЁЛ"},
+  {q:"Я ________ до угла и остановился.", answer:"дошёл", options:["иду","шёл","дошёл","доходил"], explain:"'до' + өткен, СВ → ДОШЁЛ"},
+  {q:"Когда ты ________ домой?", answer:"придёшь", options:["приходишь","придёшь","пришёл","пришёл"], explain:"'когда' = болашақ → ПРИДЁШЬ"},
+  {q:"________ сюда, я хочу тебе кое-что показать.", answer:"подойди", options:["иди","подойди","зайди","приходи"], explain:"жақындап келу, бұйрық → ПОДОЙДИ"},
+  {q:"Мы ________ в новую квартиру в прошлом году.", answer:"переехали", options:["переезжаем","переехали","переедем","переезжали"], explain:"'в прошлом году' = бір рет, СВ → ПЕРЕЕХАЛИ"}
+];
+
+const pronouns = ["я", "ты", "он/она", "мы", "вы", "они"];
+
+let currentFilter = "all";
+let currentWord = null;
+let quizState = { idx: 0, score: 0, answered: false };
+
+function getAllWords() {
+  return [...baseWords, ...motionWords];
+}
+
+function showToast(msg) {
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1800);
+}
+
+function speak(text) {
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "ru-RU";
+  u.rate = 0.85;
+  window.speechSynthesis.speak(u);
+}
+
+function renderList() {
+  const list = document.getElementById("word-list");
+  const search = document.getElementById("search").value.toLowerCase();
+  
+  if (currentFilter === "Жиілік") {
+    list.innerHTML = `<div class="freq-grid">${frequencyWords.map(w => `
+      <div class="freq-item">
+        <div class="freq-ru">${w.ru}</div>
+        <div class="freq-kz">${w.kz}</div>
+        <div class="freq-pron">${w.pron}</div>
+      </div>
+    `).join("")}</div>
+    <div class="info-box" style="margin-top:16px">
+      <b>📌 Ереже:</b> Жиілік сөзі бар (каждый день, часто, обычно) сөйлемде <b>ХОДИТЬ / ЕЗДИТЬ</b> қолданылады.
+    </div>`;
+    return;
+  }
+  
+  if (currentFilter === "Салыстыру") {
+    list.innerHTML = `
+      <div class="compare-card">
+        <div class="compare-title">ИДТИ vs ХОДИТЬ (жаяу)</div>
+        <div class="compare-row"><div class="verb">ИДТИ</div><div class="meaning">бір рет, қазір</div><div class="example">Я иду в школу. — Мектепке барып жатырмын.</div></div>
+        <div class="compare-row"><div class="verb">ХОДИТЬ</div><div class="meaning">үнемі, әдетте</div><div class="example">Я хожу в школу каждый день. — Мен күн сайын мектепке барамын.</div></div>
+      </div>
+      <div class="compare-card">
+        <div class="compare-title">ЕХАТЬ vs ЕЗДИТЬ (көлікпен)</div>
+        <div class="compare-row"><div class="verb">ЕХАТЬ</div><div class="meaning">бір рет, қазір</div><div class="example">Я еду в Алматы. — Алматыға барып жатырмын.</div></div>
+        <div class="compare-row"><div class="verb">ЕЗДИТЬ</div><div class="meaning">үнемі, әдетте</div><div class="example">Я езжу в Алматы каждую неделю. — Апта сайын Алматыға барамын.</div></div>
+      </div>
+      <div class="compare-card">
+        <div class="compare-title">ПРИЙТИ vs ПРИХОДИТЬ</div>
+        <div class="compare-row"><div class="verb">ПРИЙТИ (СВ)</div><div class="meaning">бір рет келу</div><div class="example">Он пришёл вчера. — Ол кеше келді.</div></div>
+        <div class="compare-row"><div class="verb">ПРИХОДИТЬ (НСВ)</div><div class="meaning">үнемі келу</div><div class="example">Он приходит каждый день. — Ол күн сайын келеді.</div></div>
+      </div>
+      <div class="compare-card">
+        <div class="compare-title">ЗАЙТИ vs ЗАЕХАТЬ (соғып кету)</div>
+        <div class="compare-row"><div class="verb">ЗАЙТИ</div><div class="meaning">жаяу соғып кету</div><div class="example">Зайди в магазин. — Дүкенге соғып кет.</div></div>
+        <div class="compare-row"><div class="verb">ЗАЕХАТЬ</div><div class="meaning">көлікпен соғып кету</div><div class="example">Заедь по пути. — Жолда соғып кет.</div></div>
+      </div>
+      <div class="compare-card">
+        <div class="compare-title">СХОДИТЬ vs СЪЕЗДИТЬ (барып қайту)</div>
+        <div class="compare-row"><div class="verb">СХОДИТЬ</div><div class="meaning">жаяу барып қайту</div><div class="example">Сходи к врачу. — Дәрігерге барып кел.</div></div>
+        <div class="compare-row"><div class="verb">СЪЕЗДИТЬ</div><div class="meaning">көлікпен барып қайту</div><div class="example">Съезди в аэропорт. — Әуежайға барып кел.</div></div>
+      </div>
+      <div class="info-box"><b>💡 Маңызды:</b><br>🟢 НСВ = процессті, үнемі<br>🔴 СВ = нәтиже, бір рет<br>🚶 жаяу | 🚗 көлікпен</div>
+    `;
+    return;
+  }
+  
+  let words = [];
+  if (currentFilter === "Менің") words = customWords;
+  else if (currentFilter === "Қозғалыс" || currentFilter === "all" || currentFilter === "Негізгі") {
+    words = getAllWords();
+    if (currentFilter !== "all") words = words.filter(w => w.cat === currentFilter);
+  } else words = getAllWords();
+  
+  const filtered = words.filter(w => {
+    if (search && !(w.ru.toLowerCase().includes(search) || w.kz.toLowerCase().includes(search) || (w.pron && w.pron.toLowerCase().includes(search)))) return false;
+    return true;
+  });
+  
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><div class="text">Табылмады</div></div>`;
+    return;
+  }
+  
+  list.innerHTML = filtered.map(w => {
+    let tagHtml = "";
+    if (w.type === "НСВ") tagHtml += `<span class="word-tag tag-НСВ">НСВ</span> `;
+    if (w.type === "СВ") tagHtml += `<span class="word-tag tag-СВ">СВ</span> `;
+    if (w.transport === "ж") tagHtml += `<span class="word-tag tag-ж">🚶</span> `;
+    if (w.transport === "к") tagHtml += `<span class="word-tag tag-к">🚗</span> `;
+    return `
+      <div class="word-card" data-ru="${w.ru}">
+        <div class="word-icon">${w.icon || "📝"}</div>
+        <div class="word-info">
+          <div class="word-ru">${w.ru} ${tagHtml}</div>
+          <div class="word-kz">${w.kz}</div>
+          ${w.pron ? `<div class="word-pron">[${w.pron}]</div>` : ""}
+        </div>
+      </div>
+    `;
+  }).join("");
+  
+  list.querySelectorAll(".word-card").forEach(card => {
+    card.onclick = () => openDetail(card.dataset.ru);
+  });
+}
+
+function openDetail(ru) {
+  const word = getAllWords().find(w => w.ru === ru) || customWords.find(w => w.ru === ru);
+  if (!word) return;
+  currentWord = word;
+  document.getElementById("home-view").style.display = "none";
+  const dv = document.getElementById("detail-view");
+  dv.style.display = "flex";
+  dv.classList.add("fade-in");
+  document.getElementById("detail-title").textContent = word.ru;
+  
+  const isCustom = customWords.includes(word);
+  let tagsHtml = "";
+  if (word.type === "НСВ") tagsHtml += `<span class="word-tag tag-НСВ">НСВ</span> `;
+  if (word.type === "СВ") tagsHtml += `<span class="word-tag tag-СВ">СВ</span> `;
+  if (word.transport === "ж") tagsHtml += `<span class="word-tag tag-ж">🚶 жаяу</span> `;
+  if (word.transport === "к") tagsHtml += `<span class="word-tag tag-к">🚗 көлік</span> `;
+  
+  let examplesHtml = "";
+  if (word.examples && word.examples.length) {
+    examplesHtml = `<div class="examples-card"><div class="ex-title">💬 Мысалдар</div>`;
+    word.examples.forEach(ex => {
+      examplesHtml += `<div class="ex-row"><span class="ex-ru">${ex.ru}</span><button class="conj-sound" onclick="speak('${ex.ru}')">🔊</button><div class="ex-kz">${ex.kz}</div></div>`;
+    });
+    examplesHtml += `</div>`;
+  }
+  
+  const renderTense = (title, dotClass, forms, trans) => {
+    if (forms[0] === "—") return "";
+    return `<div class="tense-section">
+      <div class="tense-title"><div class="dot ${dotClass}"></div> ${title}</div>
+      <div class="conjugation-card">
+        ${forms.map((form, i) => `
+          <div class="conj-row">
+            <div class="conj-pronoun">${pronouns[i]}</div>
+            <div style="flex:1">
+              <div class="conj-form">${form}</div>
+              <div class="conj-translation">${trans[i]}</div>
+            </div>
+            <button class="conj-sound" onclick="speak('${form.replace(/[\/]/g, '').split(' ')[0]}')">🔊</button>
+          </div>
+        `).join("")}
+      </div>
+    </div>`;
+  };
+  
+  const imperativeHtml = word.imperative && word.imperative[0] !== "—" ? `
+    <div class="tense-section">
+      <div class="tense-title"><div class="dot dot-imperative"></div> 💬 БҰЙРЫҚ РАЙ</div>
+      <div class="conjugation-card">
+        <div class="conj-row"><div class="conj-pronoun">ты</div><div class="conj-form">${word.imperative[0]}</div></div>
+        <div class="conj-row"><div class="conj-pronoun">вы</div><div class="conj-form">${word.imperative[1]}</div></div>
+      </div>
+    </div>` : "";
+  
+  document.getElementById("detail-content").innerHTML = `
+    <div class="hero">
+      <div class="hero-word">${word.icon || "📝"} ${word.ru}</div>
+      ${word.pron ? `<div class="hero-pron">[${word.pron}]</div>` : ""}
+      <div class="hero-kz">${word.kz}</div>
+      <div class="hero-tags">${tagsHtml}</div>
+      <div class="hero-actions">
+        <button class="hero-btn" onclick="speak('${word.ru}')">🔊 Айтылуы</button>
+        ${isCustom ? `<button class="hero-btn" onclick="deleteCustomWord('${word.ru}')">🗑 Жою</button>` : ""}
+      </div>
+    </div>
+    ${examplesHtml}
+    ${renderTense("🟢 ОСЫ ШАҚ (что делает?)", "dot-present", word.present, word.translations)}
+    ${renderTense("🟡 ӨТКЕН ШАҚ (что делал?)", "dot-past", word.past, word.past_translations || word.translations)}
+    ${renderTense("🔵 КЕЛЕР ШАҚ (что будет делать?)", "dot-future", word.future, word.translations)}
+    ${imperativeHtml}
+    <div style="height:40px"></div>
+  `;
+}
+
+document.getElementById("detail-back").onclick = () => {
+  document.getElementById("detail-view").style.display = "none";
+  document.getElementById("home-view").style.display = "flex";
+};
+
+document.getElementById("search").oninput = renderList;
+document.querySelectorAll(".filter-tab").forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll(".filter-tab").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    currentFilter = t.dataset.cat;
+    renderList();
+  };
+});
+
+document.getElementById("add-btn").onclick = () => document.getElementById("add-modal").classList.add("show");
+document.getElementById("info-btn").onclick = () => document.getElementById("info-modal").classList.add("show");
+document.getElementById("install-close").onclick = () => {
+  document.getElementById("install-prompt").classList.remove("show");
+  localStorage.setItem('install_dismissed', Date.now().toString());
+};
+document.getElementById("install-btn").onclick = () => {
+  showToast("Safari → төменгі 📤 → Үй экранына қосу");
+};
+document.querySelectorAll("[data-close]").forEach(b => { b.onclick = () => b.closest(".modal-back").classList.remove("show"); });
+document.querySelectorAll(".modal-back").forEach(m => { m.onclick = e => { if (e.target === m) m.classList.remove("show"); }; });
+
+document.getElementById("save-word").onclick = () => {
+  const ru = document.getElementById("new-ru").value.trim().toLowerCase();
+  const kz = document.getElementById("new-kz").value.trim();
+  const pron = document.getElementById("new-pron").value.trim();
+  const cat = document.getElementById("new-cat").value;
+  if (!ru || !kz) { showToast("❌ Толтырыңыз"); return; }
+  const newWord = {
+    ru, kz, pron, cat, icon: "📝", type: "НСВ",
+    present: ["я " + ru, "ты " + ru, "он " + ru, "мы " + ru, "вы " + ru, "они " + ru],
+    past: ["я " + ru, "ты " + ru, "он " + ru, "мы " + ru, "вы " + ru, "они " + ru],
+    future: ["я буду " + ru, "ты будешь " + ru, "он будет " + ru, "мы будем " + ru, "вы будете " + ru, "они будут " + ru],
+    imperative: [ru, ru],
+    translations: ["Мен " + kz + " жатырмын", "Сен " + kz + " жатырсың", "Ол " + kz + " жатыр", "Біз " + kz + " жатырмыз", "Сіздер " + kz + " жатырсыздар", "Олар " + kz + " жатыр"],
+    past_translations: ["Мен " + kz + "дым", "Сен " + kz + "дың", "Ол " + kz + "ды", "Біз " + kz + "дық", "Сіздер " + kz + "дыңыздар", "Олар " + kz + "ды"],
+    examples: []
+  };
+  customWords.unshift(newWord);
+  localStorage.setItem(STORE_KEY, JSON.stringify(customWords));
+  document.getElementById("add-modal").classList.remove("show");
+  showToast("✅ Қосылды");
+  renderList();
+};
+
+window.deleteCustomWord = function(ru) {
+  if (!confirm(`"${ru}" жою керек пе?`)) return;
+  customWords = customWords.filter(w => w.ru !== ru);
+  localStorage.setItem(STORE_KEY, JSON.stringify(customWords));
+  document.getElementById("detail-back").click();
+  renderList();
+};
+
+document.getElementById("practice-btn").onclick = () => {
+  quizState = { idx: 0, score: 0, answered: false };
+  document.getElementById("home-view").style.display = "none";
+  document.getElementById("practice-view").style.display = "flex";
+  showQuiz();
+};
+document.getElementById("practice-back").onclick = () => {
+  document.getElementById("practice-view").style.display = "none";
+  document.getElementById("home-view").style.display = "flex";
+};
+
+function showQuiz() {
+  if (quizState.idx >= quizzes.length) {
+    const pct = Math.round(quizState.score / quizzes.length * 100);
+    let msg = pct >= 80 ? "🏆 Тамаша!" : pct >= 50 ? "👍 Жақсы!" : "📚 Қайтала";
+    document.getElementById("practice-content").innerHTML = `
+      <div style="text-align:center; padding:40px 20px">
+        <div style="font-size:60px; margin-bottom:20px">${pct >= 80 ? "🏆" : "📝"}</div>
+        <div style="font-size:24px; font-weight:700; color:#4ade80; margin-bottom:10px">${quizState.score} / ${quizzes.length}</div>
+        <div style="color:#888; margin-bottom:20px">${pct}% дұрыс</div>
+        <div style="font-size:18px; margin-bottom:24px">${msg}</div>
+        <button class="btn btn-primary" onclick="quizState={idx:0,score:0,answered:false}; showQuiz()" style="font-size:14px; padding:12px 24px">🔄 Қайта бастау</button>
+      </div>
+    `;
+    return;
+  }
+  const q = quizzes[quizState.idx];
+  document.getElementById("practice-content").innerHTML = `
+    <div class="quiz-progress">Сұрақ ${quizState.idx + 1} / ${quizzes.length} · ⭐ ${quizState.score}</div>
+    <div class="quiz-card">
+      <div class="quiz-q">${q.q.replace("________", '<span class="blank">?</span>')}</div>
+      <div class="quiz-options">
+        ${q.options.map(o => `<button class="quiz-opt" data-opt="${o}">${o}</button>`).join("")}
+      </div>
+      <div id="quiz-explain"></div>
+    </div>
+  `;
+  document.querySelectorAll(".quiz-opt").forEach(btn => {
+    btn.onclick = () => {
+      if (quizState.answered) return;
+      quizState.answered = true;
+      const chosen = btn.dataset.opt;
+      const isCorrect = chosen === q.answer;
+      if (isCorrect) {
+        quizState.score++;
+        btn.classList.add("correct");
+        document.getElementById("quiz-explain").innerHTML = `<div class="quiz-explain">✅ <b>Дұрыс!</b><br>${q.explain}</div>`;
+      } else {
+        btn.classList.add("wrong");
+        document.querySelector(`.quiz-opt[data-opt="${q.answer}"]`).classList.add("correct");
+        document.getElementById("quiz-explain").innerHTML = `<div class="quiz-explain" style="background:#3a1e1e;border-color:#dc2626;color:#fcd4aa">❌ <b>Қате!</b> Дұрысы: <b>${q.answer}</b><br>${q.explain}</div>`;
+      }
+      document.querySelectorAll(".quiz-opt").forEach(b => b.disabled = true);
+      setTimeout(() => { quizState.idx++; quizState.answered = false; showQuiz(); }, 2200);
+    };
+  });
+}
+
+// PWA install prompt
+function showInstallPrompt() {
+  const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+  if (isStandalone) return;
+  const dismissed = localStorage.getItem('install_dismissed');
+  if (dismissed && Date.now() - parseInt(dismissed) < 7 * 24 * 60 * 60 * 1000) return;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isAndroid = /Android/.test(navigator.userAgent);
+  if (isIOS || isAndroid) {
+    setTimeout(() => document.getElementById('install-prompt').classList.add('show'), 3000);
+  }
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  setTimeout(() => document.getElementById('install-prompt').classList.add('show'), 3000);
+});
+
+renderList();
+showInstallPrompt();
+</script>
+</body>
+</html>
